@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { CreateCoffeeDto } from './dto/create-coffee.dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
+import { log } from 'console';
 
 @Controller('coffees')
 export class CoffeesController {
@@ -33,8 +34,10 @@ export class CoffeesController {
 
   //Route
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.CoffeesService.findOne(id);
+  findOne(@Param('id') id: number) {
+    console.log(typeof id);
+    
+    return this.CoffeesService.findOne('' + id);
     // return `This action return #${id} coffee`;
   }
 
@@ -42,6 +45,7 @@ export class CoffeesController {
   @Post()
   // @HttpCode(HttpStatus.GONE)
   create(@Body() createCoffeDto: CreateCoffeeDto) {
+    console.log(createCoffeDto instanceof CreateCoffeeDto);
     return this.CoffeesService.create(createCoffeDto);
     // return `This action return #${id} coffee`
   }
