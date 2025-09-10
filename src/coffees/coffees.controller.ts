@@ -24,7 +24,7 @@ export class CoffeesController {
   constructor(private readonly CoffeesService: CoffeesService, @Inject(REQUEST) private readonly request: Request,
 ){
     console.log('CoffeesController created')
-  }
+}
   @Get()
   // //Response
   // findAll(@Res() response) {
