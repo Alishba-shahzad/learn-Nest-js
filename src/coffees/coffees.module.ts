@@ -9,7 +9,7 @@ import { COFFEE_BRANDS } from './coffees.constants';
 import { Flavor } from './entities/flavor.entity/flavor.entity';
 
 import { DataSource } from 'typeorm';
-
+import coffeesConfig from './config/coffees.config';
 
 // class ConfigService {}
 // class DevelopmentConfigService {}
@@ -23,7 +23,10 @@ import { DataSource } from 'typeorm';
 // }
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Coffee, Flavor, CoffeeEvent]), ConfigModule], 
+  imports: [
+    TypeOrmModule.forFeature([Coffee, Flavor, CoffeeEvent]),
+    ConfigModule.forFeature(coffeesConfig),
+  ],
   controllers: [CoffeesController],
   providers: [
     CoffeesService,
@@ -37,9 +40,9 @@ import { DataSource } from 'typeorm';
     // },
     {
       provide: COFFEE_BRANDS,
-     useFactory:() => ['buddy brew', 'nescafe'],
-     scope: Scope.TRANSIENT,
-  }
+      useFactory: () => ['buddy brew', 'nescafe'],
+      scope: Scope.TRANSIENT,
+    },
   ],
   exports: [CoffeesService],
 })
