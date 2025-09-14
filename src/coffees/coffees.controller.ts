@@ -15,6 +15,8 @@ import {
   UsePipes,
   ValidationPipe,
   SetMetadata,
+  ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { CreateCoffeeDto } from './dto/create-coffee.dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
@@ -23,34 +25,42 @@ import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto/paginati
 import { REQUEST } from '@nestjs/core';
 import { Validate } from 'class-validator';
 import { Public } from 'src/common/decorators/public.decorators';
+import { resolve } from 'path';
+import { request } from 'http';
+import { Protocol } from 'src/common/decorators/protocol.decorator';
+import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('coffeees')
 @Controller('coffees')
 export class CoffeesController {
-  constructor(private readonly CoffeesService: CoffeesService, @Inject(REQUEST) private readonly request: Request,
-){
-    console.log('CoffeesController created')
-}
-  
- 
+  constructor(private readonly CoffeesService: CoffeesService) {
+    //      @Inject(REQUEST) private readonly request: Request,
+    // ){
+    //     console.log('CoffeesController created')
+  }
+
   // //Response
   // findAll(@Res() response) {
   //   response.status(200).send ('This action is return all coffees');
   // }
 
+// @ApiForbiddenResponse({description: 'Forbidden.'})
   @Public()
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
-  //  const {limit, offset} = paginationQuery;
-    return this.CoffeesService.findAll(paginationQuery)
-  //  return `This action return all coffees. Limit: ${limit}, offset: ${offset}`;
+  async findAll(
+    @Protocol('https') protocol: string,
+    @Query() paginationQuery: PaginationQueryDto,
+  ) {
+    //  await new Promise(resolve => setTimeout(resolve, 5000));
+    //  const {limit, offset} = paginationQuery;
+    console.log(protocol);
+    return this.CoffeesService.findAll(paginationQuery);
+    //  return `This action return all coffees. Limit: ${limit}, offset: ${offset}`;
   }
 
   //Route
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    console.log(typeof id);
-    
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.CoffeesService.findOne('' + id);
     // return `This action return #${id} coffee`;
   }
@@ -59,14 +69,14 @@ export class CoffeesController {
   @Post()
   // @HttpCode(HttpStatus.GONE)
   create(@Body() createCoffeDto: CreateCoffeeDto) {
-    console.log(createCoffeDto instanceof CreateCoffeeDto);
+    // console.log(createCoffeDto instanceof CreateCoffeeDto);
     return this.CoffeesService.create(createCoffeDto);
     // return `This action return #${id} coffee`
   }
 
   //Update
   @Patch(':id')
-  update(@Param('id') id: string, @Body(ValidationPipe) updateCoffeeDto: UpdateCoffeeDto) {
+  update(@Param('id') id: string, @Body() updateCoffeeDto: UpdateCoffeeDto) {
     return this.CoffeesService.update(id, updateCoffeeDto);
   }
 
